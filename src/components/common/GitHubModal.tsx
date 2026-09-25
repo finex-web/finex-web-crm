@@ -19,7 +19,7 @@ interface GitHubModalProps {
 }
 
 export const GitHubModal: React.FC<GitHubModalProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'initial' | 'push_changes'>('initial');
+  const [activeTab, setActiveTab] = useState<'initial' | 'push_changes' | 'actions'>('actions');
   const [username, setUsername] = useState('YOUR_USERNAME');
   const [repoName, setRepoName] = useState('YOUR_REPO_NAME');
   const [commitMessage, setCommitMessage] = useState('feat: complete FINEX WEB agency operating system');
@@ -136,6 +136,19 @@ git push origin main`;
           >
             <Upload className="w-3.5 h-3.5" />
             <span>2. Push Future Changes / Updates</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('actions')}
+            className={`px-3.5 py-2 text-xs font-semibold flex items-center gap-2 border-b-2 transition-colors ${
+              activeTab === 'actions'
+                ? 'border-[#E52D27] text-white'
+                : 'border-transparent text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            <Terminal className="w-3.5 h-3.5" />
+            <span>3. GitHub Actions (What To Do)</span>
           </button>
         </div>
 
@@ -264,6 +277,77 @@ git push origin main`;
                   <span className="text-zinc-500"># 4. Push updates to GitHub</span>{'\n'}
                   <span className="text-amber-400 font-semibold">git push origin main</span>
                 </pre>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: GITHUB ACTIONS EXPLANATION & OPTIONS */}
+          {activeTab === 'actions' && (
+            <div className="space-y-4 text-xs">
+              <div className="p-3.5 bg-[#17191d] border border-white/[0.08] rounded-lg space-y-2">
+                <div className="font-bold text-white flex items-center gap-2">
+                  <Terminal className="w-4 h-4 text-[#E52D27]" />
+                  <span>Why is GitHub showing "Get started with GitHub Actions"?</span>
+                </div>
+                <p className="text-[11px] text-zinc-300 leading-relaxed">
+                  GitHub automatically offers Actions for new repositories to set up CI/CD (Continuous Integration & Automated Deployment). You have 3 easy choices:
+                </p>
+              </div>
+
+              {/* Option 1 */}
+              <div className="p-3.5 bg-[#17191d] border border-white/[0.06] rounded-lg space-y-1.5">
+                <div className="font-semibold text-white flex items-center justify-between">
+                  <span className="text-emerald-400">Choice 1: Just view your code (Skip Actions)</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-800 text-[10px] text-zinc-400 font-mono">Easiest</span>
+                </div>
+                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                  If you just want to see your files, simply click the <strong className="text-white font-semibold">"Code"</strong> tab at the very top-left of the GitHub page. You don't have to configure any actions right now.
+                </p>
+              </div>
+
+              {/* Option 2 */}
+              <div className="p-3.5 bg-[#17191d] border border-emerald-800/40 bg-emerald-950/20 rounded-lg space-y-2">
+                <div className="font-semibold text-white flex items-center justify-between">
+                  <span className="text-emerald-300">Choice 2: Push pre-configured CI & Deployment workflows</span>
+                  <span className="px-2 py-0.5 rounded bg-emerald-900/60 text-[10px] text-emerald-300 font-mono">Recommended</span>
+                </div>
+                <p className="text-[11px] text-zinc-300 leading-relaxed">
+                  We have already created the official <code className="text-emerald-400 font-mono">.github/workflows/ci.yml</code> and <code className="text-emerald-400 font-mono">deploy-pages.yml</code> files for you! Run this in your terminal to push them:
+                </p>
+                <div className="relative group">
+                  <pre className="p-3 bg-[#090a0c] border border-white/10 rounded font-mono text-[11px] text-zinc-200 overflow-x-auto leading-relaxed">
+                    <span className="text-emerald-400 font-semibold">git add .</span>{'\n'}
+                    <span className="text-emerald-400 font-semibold">git commit -m &quot;ci: add GitHub Actions build & deploy workflows&quot;</span>{'\n'}
+                    <span className="text-amber-400 font-semibold">git push origin main</span>
+                  </pre>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleCopy(
+                        'git add .\ngit commit -m "ci: add GitHub Actions build & deploy workflows"\ngit push origin main',
+                        'actions-push'
+                      )
+                    }
+                    className="absolute right-2 top-2 px-2.5 py-1 rounded bg-[#E52D27] hover:bg-[#c92520] text-white text-[10px] font-semibold flex items-center gap-1 transition-colors"
+                  >
+                    {copiedId === 'actions-push' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    <span>{copiedId === 'actions-push' ? 'Copied!' : 'Copy'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Option 3 */}
+              <div className="p-3.5 bg-[#17191d] border border-white/[0.06] rounded-lg space-y-1.5">
+                <div className="font-semibold text-white flex items-center justify-between">
+                  <span className="text-sky-400">Choice 3: Free Live Hosting via GitHub Pages</span>
+                  <span className="px-2 py-0.5 rounded bg-sky-950 text-[10px] text-sky-400 font-mono">Free Hosting</span>
+                </div>
+                <ol className="text-[11px] text-zinc-400 space-y-1 list-decimal list-inside leading-relaxed">
+                  <li>In your GitHub repo, click <strong className="text-white">Settings</strong> (gear icon).</li>
+                  <li>Click <strong className="text-white">Pages</strong> on the left sidebar.</li>
+                  <li>Under <em>Build and deployment</em> &gt; <em>Source</em>, select <strong className="text-white font-mono">GitHub Actions</strong>.</li>
+                  <li>Every push to <code className="font-mono text-zinc-300">main</code> will automatically build and publish your website!</li>
+                </ol>
               </div>
             </div>
           )}
