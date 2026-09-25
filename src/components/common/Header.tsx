@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Menu,
+  Github,
 } from 'lucide-react';
 import { db } from '../../lib/db';
 
@@ -18,6 +19,7 @@ interface HeaderProps {
   onOpenSearch: () => void;
   onOpenNotifications: () => void;
   onNavigateToSettings?: () => void;
+  onOpenGitHub?: () => void;
   activeView: string;
 }
 
@@ -26,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSearch,
   onOpenNotifications,
   onNavigateToSettings,
+  onOpenGitHub,
   activeView,
 }) => {
   const { user, logout } = useAuth();
@@ -131,6 +134,17 @@ export const Header: React.FC<HeaderProps> = ({
               isConfigured ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-400'
             }`}
           />
+        </button>
+
+        {/* GitHub Publish / Push Changes Button */}
+        <button
+          type="button"
+          onClick={onOpenGitHub}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border border-white/10 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+          title="Push Code & Changes to GitHub"
+        >
+          <Github className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline font-mono text-[11px]">PUSH GITHUB</span>
         </button>
 
         {/* Notification Bell */}

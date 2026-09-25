@@ -1472,6 +1472,44 @@ class DatabaseManager {
     return { clients, leads, projects, team, quotes };
   }
 
+  public getRawState(): DBState {
+    return JSON.parse(JSON.stringify(this.state));
+  }
+
+  public exportFullBackup(): string {
+    return JSON.stringify(
+      {
+        appName: 'FINEX WEB',
+        agency: this.state.settings.agency_name,
+        exportedAt: new Date().toISOString(),
+        version: '1.0.0',
+        data: this.state,
+      },
+      null,
+      2
+    );
+  }
+
+  public importFullBackup(jsonString: string): { success: boolean; message: string } {
+    try {
+      const parsed = JSON.parse(jsonString);
+      const incomingState = parsed.data || parsed;
+      if (!incomingState || typeof incomingState !== 'object') {
+        return { success: false, message: 'Invalid backup file: Could not detect agency database structure.' };
+      }
+
+      this.state = {
+        ...getInitialState(),
+        ...incomingState,
+      };
+      this.saveState();
+      this.logActivity('Data Restored', 'Full System Backup', 'Imported complete agency database backup from JSON file.');
+      return { success: true, message: 'Database backup imported successfully! All records have been restored.' };
+    } catch (e: any) {
+      return { success: false, message: e?.message || 'Failed to parse backup JSON.' };
+    }
+  }
+
   public resetToInitialData() {
     this.state = getInitialState();
     this.saveState();
